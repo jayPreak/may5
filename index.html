@@ -61,8 +61,8 @@ html, body { background: #000; }
     linear-gradient(180deg, rgba(20,5,12,0.55), rgba(60,15,40,0.4));
 }
 
-/* Letterboxing for cinema feel */
-.cine-bars::before, .cine-bars::after {
+/* Letterboxing for cinema feel — top bar only, no bottom bar */
+.cine-bars::before {
   content: "";
   position: fixed;
   left: 0; right: 0;
@@ -70,9 +70,8 @@ html, body { background: #000; }
   background: #000;
   z-index: 50;
   pointer-events: none;
+  top: 0;
 }
-.cine-bars::before { top: 0; }
-.cine-bars::after { bottom: 0; }
 
 /* Big cinema type */
 .cine-word {
