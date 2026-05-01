@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#0a0306" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-<title>Where Hearts Roam</title>
+<title>HAPY BIRTHDAY ISHU 🩷</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -249,8 +249,23 @@ html, body { background: #000; }
 <!-- Preload curtain -->
 <div id="preload">
   <div class="pl-mark"></div>
-  <div class="pl-text">Loading the world…</div>
+  <div class="pl-text">Your birthday awaits…</div>
 </div>
+<script>
+  // Runs immediately, independent of all other scripts
+  (function() {
+    var p = document.getElementById('preload');
+    function hide() { if (p) p.classList.add('gone'); }
+    setTimeout(hide, 1800);
+    var vs = document.querySelectorAll('.bg-video');
+    var need = Math.min(vs.length, 2), count = 0;
+    function tick() { if (++count >= need) hide(); }
+    for (var i = 0; i < need; i++) {
+      vs[i].addEventListener('canplay', tick, { once: true });
+      vs[i].addEventListener('error', tick, { once: true });
+    }
+  })();
+</script>
 
 <!-- Brand + audio chrome -->
 <div class="brand">Hearts <span class="amp">&amp;</span> Lilies</div>
@@ -276,16 +291,16 @@ html, body { background: #000; }
     <div class="scene-content">
       <div style="text-align:center; padding: 0 24px; max-width: 900px;">
         <div class="word-reveal in" style="margin-bottom: 24px;">
-          <span class="cine-tag">A digital love story</span>
+          <span class="cine-tag">Happy Birthday · 5 May</span>
         </div>
-        <h1 class="cine-word word-reveal in" style="margin-bottom: 8px;">where</h1>
+        <h1 class="cine-word word-reveal in" style="margin-bottom: 8px;">happy</h1>
         <h1 class="cine-word word-reveal in" style="margin-bottom: 56px;">
-          <span class="cine-script" style="color:#ffb8cf;">hearts</span> roam
+          birthday, <span class="cine-script" style="color:#ffb8cf;">Ishu</span>
         </h1>
         <button class="btn-begin word-reveal in" id="beginBtn"
                 onclick="document.getElementById('scene-1').scrollIntoView({behavior:'smooth'})">
           <span class="dot"></span>
-          <span>Enter</span>
+          <span>Celebrate</span>
         </button>
       </div>
     </div>
@@ -309,10 +324,10 @@ html, body { background: #000; }
     <div class="scene-content">
       <div style="text-align:center; padding: 0 24px;">
         <div class="word-reveal" style="margin-bottom: 18px;">
-          <span class="cine-tag">i. open water</span>
+          <span class="cine-tag">i. mwaaah</span>
         </div>
         <h2 class="cine-word word-reveal">
-          <span class="cine-script" style="color:#ffd9e4;">drift</span>
+          <span class="cine-script" style="color:#ffd9e4;">finally 20</span>
         </h2>
       </div>
     </div>
@@ -337,10 +352,10 @@ html, body { background: #000; }
     <div class="scene-content">
       <div style="text-align:center; padding: 0 24px;">
         <div class="word-reveal" style="margin-bottom: 18px;">
-          <span class="cine-tag">ii. bloom</span>
+          <span class="cine-tag">ii. in full bloom</span>
         </div>
         <h2 class="cine-word word-reveal">
-          <span class="cine-script" style="color:#ffd9e4;">opened</span>
+          <span class="cine-script" style="color:#ffd9e4;">blossom</span>
         </h2>
       </div>
     </div>
@@ -359,17 +374,21 @@ html, body { background: #000; }
     <div class="scene-content">
       <div style="text-align:center; padding: 0 24px;">
         <div class="word-reveal" style="margin-bottom: 18px;">
-          <span class="cine-tag">iii. shore</span>
+          <span class="cine-tag">iii. the day arrives · may 5</span>
         </div>
         <h2 class="cine-word word-reveal">
-          <span class="cine-script" style="color:#ffd9e4;">arrive</span>
+          <span class="cine-script" style="color:#ffd9e4;">today</span>
         </h2>
       </div>
     </div>
   </section>
 
   <!-- ==================== SCENE 4 — GOLDEN HOUR (sunset, replaces fizz) ==================== -->
-  <section class="scene" id="scene-4" data-scene-label="04 Golden">
+  <section class="scene" id="scene-4" data-scene-label="04 Golden" style="background:
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(255,160,40,0.28), transparent 65%),
+    radial-gradient(ellipse 60% 70% at 100% 50%, rgba(255,120,20,0.18), transparent 60%),
+    radial-gradient(ellipse 70% 70% at 0% 100%, rgba(200,90,10,0.15), transparent 60%),
+    #1a0d00;">
     <video class="bg-video ken-burns" autoplay muted loop playsinline preload="auto">
       <source src="https://videos.pexels.com/video-files/3045163/3045163-uhd_3840_2160_24fps.mp4" type="video/mp4">
     </video>
@@ -381,10 +400,10 @@ html, body { background: #000; }
     <div class="scene-content">
       <div style="text-align:center; padding: 0 24px;">
         <div class="word-reveal" style="margin-bottom: 18px;">
-          <span class="cine-tag">iv. golden hour</span>
+          <span class="cine-tag">iv. your golden day</span>
         </div>
         <h2 class="cine-word word-reveal">
-          <span class="cine-script" style="color:#ffe9a8;">linger</span>
+          <span class="cine-script" style="color:#ffe9a8;">shine</span>
         </h2>
       </div>
     </div>
@@ -413,17 +432,17 @@ html, body { background: #000; }
 
       <div style="text-align:center; padding: 0 24px;">
         <div class="word-reveal" style="margin-bottom: 24px;">
-          <span class="cine-tag">v. always</span>
+          <span class="cine-tag">v. birthday wishes · always</span>
         </div>
         <h2 class="cine-word word-reveal">
-          <span class="cine-script" style="color:#ffd9e4;">forever</span>
+          <span class="cine-script" style="color:#ffd9e4;">cherished</span>
         </h2>
       </div>
 
       <button class="btn-begin word-reveal" onclick="document.getElementById('scene-0').scrollIntoView({behavior:'smooth'})"
               style="padding: 18px 42px; font-size:11px; letter-spacing:0.4em;">
         <span class="dot"></span>
-        <span>Again</span>
+        <span>Relive</span>
       </button>
     </div>
   </section>
