@@ -49,20 +49,18 @@
   const need = Math.min(videos.length, 2); // wait for first 2
 
   function tryHide() {
-    if (readyCount >= need || performance.now() > 6000) {
+    if (readyCount >= need) {
       preload.classList.add('gone');
     }
   }
   videos.forEach((v, i) => {
     if (i < need) {
-      v.addEventListener('canplay', () => {
-        readyCount++;
-        tryHide();
-      }, { once: true });
+      v.addEventListener('canplay', () => { readyCount++; tryHide(); }, { once: true });
+      v.addEventListener('error', () => { readyCount++; tryHide(); }, { once: true });
     }
   });
-  // Failsafe — hide after 4s no matter what
-  setTimeout(() => preload.classList.add('gone'), 4000);
+  // Failsafe — hide after 2s no matter what
+  setTimeout(() => preload.classList.add('gone'), 2000);
 
   // ============ Audio toggle ============
   const audio = document.getElementById('ambient');
