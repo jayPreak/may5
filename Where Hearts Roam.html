@@ -1,0 +1,459 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#0a0306" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<title>Where Hearts Roam</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Italiana&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="styles.css">
+<style>
+/* Cinematic overrides */
+html, body { background: #000; }
+.scene { position: relative; min-height: 100svh; width: 100%; overflow: hidden; }
+.bg-video {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  z-index: 0;
+  pointer-events: none;
+}
+.scene-tint {
+  position: absolute; inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+.scene-content {
+  position: relative;
+  z-index: 5;
+  width: 100%;
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.cine-vignette {
+  position: absolute; inset: 0; z-index: 2; pointer-events: none;
+  background:
+    radial-gradient(ellipse 100% 70% at 50% 50%, transparent 35%, rgba(0,0,0,0.65) 100%),
+    linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, transparent 20%, transparent 80%, rgba(0,0,0,0.55) 100%);
+}
+.pink-tint {
+  background:
+    linear-gradient(135deg, rgba(255,62,127,0.18), rgba(226,27,98,0.25)),
+    radial-gradient(ellipse 60% 80% at 50% 100%, rgba(255,143,182,0.35), transparent 60%);
+  mix-blend-mode: soft-light;
+}
+.warm-tint {
+  background:
+    linear-gradient(135deg, rgba(255,143,182,0.2), rgba(255,180,120,0.22)),
+    radial-gradient(ellipse 70% 60% at 50% 0%, rgba(255,200,150,0.3), transparent 60%);
+  mix-blend-mode: overlay;
+}
+.deep-tint {
+  background:
+    linear-gradient(180deg, rgba(20,5,12,0.55), rgba(60,15,40,0.4));
+}
+
+/* Letterboxing for cinema feel */
+.cine-bars::before, .cine-bars::after {
+  content: "";
+  position: fixed;
+  left: 0; right: 0;
+  height: 32px;
+  background: #000;
+  z-index: 50;
+  pointer-events: none;
+}
+.cine-bars::before { top: 0; }
+.cine-bars::after { bottom: 0; }
+
+/* Big cinema type */
+.cine-word {
+  font-family: 'Italiana', serif;
+  font-weight: 400;
+  font-size: clamp(80px, 18vw, 280px);
+  line-height: 0.9;
+  letter-spacing: -0.01em;
+  color: #fff;
+  text-shadow: 0 0 40px rgba(255,143,182,0.3), 0 4px 20px rgba(0,0,0,0.4);
+}
+.cine-script {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-weight: 300;
+}
+.cine-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.7);
+}
+
+/* Scene marker - tiny chapter numerals */
+.chapter-mark {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: 'Italiana', serif;
+  font-size: clamp(140px, 26vw, 380px);
+  line-height: 1;
+  color: rgba(255,255,255,0.06);
+  z-index: 3;
+  pointer-events: none;
+  mix-blend-mode: overlay;
+}
+.chapter-mark.left { left: -3vw; }
+.chapter-mark.right { right: -3vw; }
+
+/* Slow zoom on videos */
+.ken-burns {
+  animation: kenBurns 28s ease-in-out infinite alternate;
+  transform-origin: center;
+}
+@keyframes kenBurns {
+  0%   { transform: scale(1.08) translate(0, 0); }
+  100% { transform: scale(1.18) translate(-2%, 1%); }
+}
+.ken-burns-2 {
+  animation: kenBurns2 32s ease-in-out infinite alternate;
+}
+@keyframes kenBurns2 {
+  0%   { transform: scale(1.12) translate(2%, -1%); }
+  100% { transform: scale(1.22) translate(-1%, 2%); }
+}
+
+/* Fade-in word reveal */
+.word-reveal {
+  opacity: 0;
+  transform: translateY(40px) scale(0.96);
+  filter: blur(14px);
+  transition: opacity 1.6s cubic-bezier(0.2, 0.8, 0.2, 1),
+              transform 1.6s cubic-bezier(0.2, 0.8, 0.2, 1),
+              filter 1.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.word-reveal.in {
+  opacity: 1;
+  transform: none;
+  filter: blur(0);
+}
+
+/* Loading state */
+#preload {
+  position: fixed; inset: 0;
+  background: #000;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 24px;
+  transition: opacity 1s ease, visibility 1s;
+}
+#preload.gone {
+  opacity: 0;
+  visibility: hidden;
+}
+#preload .pl-mark {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: #ff5e94;
+  box-shadow: 0 0 20px #ff5e94, 0 0 50px #ff3e7f;
+  animation: plPulse 1.4s ease-in-out infinite;
+}
+#preload .pl-text {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.5);
+}
+@keyframes plPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(0.4); opacity: 0.4; }
+}
+
+/* Audio toggle */
+.audio-toggle {
+  position: fixed;
+  top: max(28px, env(safe-area-inset-top));
+  right: 32px;
+  z-index: 80;
+  display: flex; align-items: center; gap: 10px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.7);
+  cursor: pointer;
+  background: none;
+  border: none;
+  mix-blend-mode: difference;
+}
+.audio-toggle .bars {
+  display: inline-flex; gap: 2px; align-items: end;
+  height: 14px;
+}
+.audio-toggle .bars span {
+  display: block;
+  width: 2px;
+  background: rgba(255,255,255,0.7);
+  animation: barJump 0.8s ease-in-out infinite alternate;
+}
+.audio-toggle .bars span:nth-child(1) { height: 60%; animation-delay: -0.4s; }
+.audio-toggle .bars span:nth-child(2) { height: 100%; animation-delay: -0.2s; }
+.audio-toggle .bars span:nth-child(3) { height: 70%; animation-delay: 0s; }
+.audio-toggle .bars span:nth-child(4) { height: 90%; animation-delay: -0.3s; }
+@keyframes barJump {
+  to { transform: scaleY(0.3); }
+}
+.audio-toggle.muted .bars span { animation-play-state: paused; opacity: 0.3; }
+
+/* Scroll progress bar */
+.scroll-bar {
+  position: fixed;
+  left: 0; right: 0;
+  bottom: 0;
+  height: 2px;
+  z-index: 90;
+  background: transparent;
+}
+.scroll-bar-fill {
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  background: linear-gradient(to right, #ff8eb3, #ff3e7f, #fff);
+  width: 0%;
+  transition: width 0.1s linear;
+  box-shadow: 0 0 12px #ff3e7f;
+}
+
+/* Mobile tweaks for cinematic */
+@media (max-width: 820px) {
+  .cine-word { font-size: clamp(64px, 22vw, 140px) !important; }
+  .chapter-mark { font-size: clamp(120px, 36vw, 240px); }
+  .audio-toggle { right: 16px; font-size: 9px; }
+  .audio-toggle span:not(.bars) { display: none; }
+  .meta { display: none; }
+  .brand { font-size: 10px; letter-spacing: 0.28em; }
+}
+</style>
+</head>
+<body class="cine-bars">
+
+<!-- Preload curtain -->
+<div id="preload">
+  <div class="pl-mark"></div>
+  <div class="pl-text">Loading the world…</div>
+</div>
+
+<!-- Brand + audio chrome -->
+<div class="brand">Hearts <span class="amp">&amp;</span> Lilies</div>
+<button class="audio-toggle muted" id="audioToggle" aria-label="Toggle audio">
+  <span class="bars"><span></span><span></span><span></span><span></span></span>
+  <span>Sound off</span>
+</button>
+
+<main id="main">
+
+  <!-- ==================== SCENE 0 — ENTRY ==================== -->
+  <section class="scene" id="scene-0" data-scene-label="00 Entry">
+    <!-- Slow ocean horizon as ambient backdrop -->
+    <video class="bg-video ken-burns" autoplay muted loop playsinline preload="auto"
+           poster="https://images.pexels.com/videos/1409899/free-video-1409899.jpg">
+      <source src="https://videos.pexels.com/video-files/2169307/2169307-uhd_3840_2160_30fps.mp4" type="video/mp4">
+    </video>
+    <div class="scene-tint pink-tint"></div>
+    <div class="cine-vignette"></div>
+
+    <canvas class="particles" id="particles-0" style="z-index:3;"></canvas>
+
+    <div class="scene-content">
+      <div style="text-align:center; padding: 0 24px; max-width: 900px;">
+        <div class="word-reveal in" style="margin-bottom: 24px;">
+          <span class="cine-tag">A digital love story</span>
+        </div>
+        <h1 class="cine-word word-reveal in" style="margin-bottom: 8px;">where</h1>
+        <h1 class="cine-word word-reveal in" style="margin-bottom: 56px;">
+          <span class="cine-script" style="color:#ffb8cf;">hearts</span> roam
+        </h1>
+        <button class="btn-begin word-reveal in" id="beginBtn"
+                onclick="document.getElementById('scene-1').scrollIntoView({behavior:'smooth'})">
+          <span class="dot"></span>
+          <span>Enter</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="scroll-cue">
+      <span>Scroll</span>
+      <span class="line"></span>
+    </div>
+  </section>
+
+  <!-- ==================== SCENE 1 — OCEAN (drone) ==================== -->
+  <section class="scene" id="scene-1" data-scene-label="01 Ocean">
+    <video class="bg-video ken-burns-2" autoplay muted loop playsinline preload="auto">
+      <source src="https://videos.pexels.com/video-files/3163534/3163534-uhd_3840_2160_30fps.mp4" type="video/mp4">
+    </video>
+    <div class="scene-tint pink-tint"></div>
+    <div class="cine-vignette"></div>
+
+    <div class="chapter-mark left">I</div>
+
+    <div class="scene-content">
+      <div style="text-align:center; padding: 0 24px;">
+        <div class="word-reveal" style="margin-bottom: 18px;">
+          <span class="cine-tag">i. open water</span>
+        </div>
+        <h2 class="cine-word word-reveal">
+          <span class="cine-script" style="color:#ffd9e4;">drift</span>
+        </h2>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== SCENE 2 — BLOOM (lilies field / florals) ==================== -->
+  <section class="scene" id="scene-2" data-scene-label="02 Bloom">
+    <video class="bg-video ken-burns" autoplay muted loop playsinline preload="auto">
+      <source src="https://videos.pexels.com/video-files/4763824/4763824-hd_1920_1080_30fps.mp4" type="video/mp4">
+    </video>
+    <div class="scene-tint pink-tint"></div>
+    <div class="cine-vignette"></div>
+
+    <!-- Floating lily SVG accent -->
+    <div class="floral" data-floral="lily" data-size="320" data-glow="0.8"
+         style="position:absolute; top:8%; left:-4%; z-index:4; opacity:0.55; transform:rotate(-12deg); --rot:-12deg; animation: float-y-slow 14s ease-in-out infinite;"></div>
+    <div class="floral" data-floral="lily" data-size="220" data-glow="0.6"
+         style="position:absolute; bottom:6%; right:-2%; z-index:4; opacity:0.5; transform:rotate(18deg); --rot:18deg; animation: float-y-slow 12s ease-in-out infinite reverse;"></div>
+
+    <div class="chapter-mark right">II</div>
+
+    <div class="scene-content">
+      <div style="text-align:center; padding: 0 24px;">
+        <div class="word-reveal" style="margin-bottom: 18px;">
+          <span class="cine-tag">ii. bloom</span>
+        </div>
+        <h2 class="cine-word word-reveal">
+          <span class="cine-script" style="color:#ffd9e4;">opened</span>
+        </h2>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== SCENE 3 — BEACH REVEAL (waves on shore) ==================== -->
+  <section class="scene" id="scene-3" data-scene-label="03 Shore">
+    <video class="bg-video ken-burns-2" autoplay muted loop playsinline preload="auto">
+      <source src="https://videos.pexels.com/video-files/1409899/1409899-uhd_2560_1440_25fps.mp4" type="video/mp4">
+    </video>
+    <div class="scene-tint pink-tint"></div>
+    <div class="cine-vignette"></div>
+
+    <div class="chapter-mark left">III</div>
+
+    <div class="scene-content">
+      <div style="text-align:center; padding: 0 24px;">
+        <div class="word-reveal" style="margin-bottom: 18px;">
+          <span class="cine-tag">iii. shore</span>
+        </div>
+        <h2 class="cine-word word-reveal">
+          <span class="cine-script" style="color:#ffd9e4;">arrive</span>
+        </h2>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== SCENE 4 — GOLDEN HOUR (sunset, replaces fizz) ==================== -->
+  <section class="scene" id="scene-4" data-scene-label="04 Golden">
+    <video class="bg-video ken-burns" autoplay muted loop playsinline preload="auto">
+      <source src="https://videos.pexels.com/video-files/3045163/3045163-uhd_3840_2160_24fps.mp4" type="video/mp4">
+    </video>
+    <div class="scene-tint warm-tint"></div>
+    <div class="cine-vignette"></div>
+
+    <div class="chapter-mark right">IV</div>
+
+    <div class="scene-content">
+      <div style="text-align:center; padding: 0 24px;">
+        <div class="word-reveal" style="margin-bottom: 18px;">
+          <span class="cine-tag">iv. golden hour</span>
+        </div>
+        <h2 class="cine-word word-reveal">
+          <span class="cine-script" style="color:#ffe9a8;">linger</span>
+        </h2>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== SCENE 5 — FOREVER (final) ==================== -->
+  <section class="scene" id="scene-5" data-scene-label="05 Forever" style="min-height: 130svh;">
+    <video class="bg-video ken-burns-2" autoplay muted loop playsinline preload="auto">
+      <source src="https://videos.pexels.com/video-files/2491284/2491284-uhd_3840_2160_24fps.mp4" type="video/mp4">
+    </video>
+    <div class="scene-tint pink-tint" style="opacity:1.1;"></div>
+    <div class="cine-vignette" style="background:
+      radial-gradient(ellipse 100% 70% at 50% 50%, transparent 25%, rgba(0,0,0,0.7) 100%);"></div>
+
+    <canvas class="particles" id="particles-5" style="z-index:3;"></canvas>
+
+    <div class="scene-content" style="flex-direction:column; gap: 56px;">
+      <!-- Halo with center lily -->
+      <div style="position:relative; width: min(78vw, 480px); height: min(78vw, 480px); display:flex; align-items:center; justify-content:center;">
+        <div style="position:absolute; inset:0; border-radius:50%; border:1px solid rgba(255,143,182,0.35); animation: pulseRing 4s ease-in-out infinite;"></div>
+        <div style="position:absolute; inset:10%; border-radius:50%; border:1px solid rgba(255,143,182,0.28); animation: pulseRing 4s ease-in-out infinite; animation-delay:-1s;"></div>
+        <div style="position:absolute; inset:22%; border-radius:50%; border:1px solid rgba(255,143,182,0.2); animation: pulseRing 4s ease-in-out infinite; animation-delay:-2s;"></div>
+        <div style="position:absolute; inset:32%; border-radius:50%; background: radial-gradient(circle, rgba(255,217,228,0.85), rgba(255,62,127,0.4) 50%, transparent 80%); filter: blur(18px); animation: corePulse 5s ease-in-out infinite;"></div>
+        <div data-floral="lily" data-size="320" data-glow="1.4" style="position:relative; z-index:2; animation: float-y-slow 8s ease-in-out infinite;"></div>
+      </div>
+
+      <div style="text-align:center; padding: 0 24px;">
+        <div class="word-reveal" style="margin-bottom: 24px;">
+          <span class="cine-tag">v. always</span>
+        </div>
+        <h2 class="cine-word word-reveal">
+          <span class="cine-script" style="color:#ffd9e4;">forever</span>
+        </h2>
+      </div>
+
+      <button class="btn-begin word-reveal" onclick="document.getElementById('scene-0').scrollIntoView({behavior:'smooth'})"
+              style="padding: 18px 42px; font-size:11px; letter-spacing:0.4em;">
+        <span class="dot"></span>
+        <span>Again</span>
+      </button>
+    </div>
+  </section>
+
+</main>
+
+<!-- Hidden ambient audio (sine pad) — lazy loaded -->
+<audio id="ambient" loop preload="none">
+  <source src="https://cdn.pixabay.com/audio/2022/03/15/audio_1718e49cc2.mp3" type="audio/mpeg">
+</audio>
+
+<!-- Scroll progress bar -->
+<div class="scroll-bar"><div class="scroll-bar-fill" id="scrollBarFill"></div></div>
+
+<style>
+  @keyframes pulseRing {
+    0%, 100% { transform: scale(1); opacity: 0.5; }
+    50% { transform: scale(1.06); opacity: 0.9; }
+  }
+  @keyframes corePulse {
+    0%, 100% { opacity: 0.7; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.12); }
+  }
+</style>
+
+<script src="florals.js"></script>
+<script src="particles.js"></script>
+<script src="app.js"></script>
+<script src="tweaks.js"></script>
+
+</body>
+</html>
