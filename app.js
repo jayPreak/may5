@@ -44,7 +44,9 @@
     entries.forEach(e => {
       const v = e.target.querySelector('.bg-video');
       if (e.isIntersecting) {
-        if (v && v.paused) v.play().catch(() => {});
+        if (v && v.paused) v.play().catch(() => {
+          v.addEventListener('canplay', () => v.play().catch(() => {}), { once: true });
+        });
         const idx = parseInt(e.target.id.split('-')[1], 10);
         try { window.parent.postMessage({ slideIndexChanged: idx }, '*'); } catch (e) {}
       } else {
