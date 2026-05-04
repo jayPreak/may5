@@ -410,7 +410,20 @@ html, body { background: #000; }
 </script>
 
 <!-- Brand + audio chrome -->
-<div class="brand" data-content="brand">Hearts &amp; Lilies</div>
+<header style="
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  padding: 16px 32px;
+  background: rgba(5,1,6,0.55);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-bottom: 1px solid rgba(255,143,182,0.12);
+  display: flex;
+  align-items: center;
+">
+  <div class="brand" data-content="brand" style="position:static; mix-blend-mode:normal; top:auto; left:auto;">Hearts &amp; Lilies</div>
+</header>
 <button class="audio-toggle muted" id="audioToggle" aria-label="Toggle audio">
   <span class="bars"><span></span><span></span><span></span><span></span></span>
   <span>Sound off</span>
