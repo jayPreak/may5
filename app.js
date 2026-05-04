@@ -1,3 +1,15 @@
+// ============ Content injection from content.js ============
+(function () {
+  if (!window.CONTENT) return;
+  function get(path) {
+    return path.split('.').reduce((o, k) => o && o[k], window.CONTENT);
+  }
+  document.querySelectorAll('[data-content]').forEach(el => {
+    const val = get(el.dataset.content);
+    if (val !== undefined) el.textContent = val;
+  });
+})();
+
 // ============ Cinematic App ============
 (function () {
   // Mount all florals
