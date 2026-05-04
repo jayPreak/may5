@@ -1,6 +1,6 @@
 window.CONTENT = {
   preload:  "Your birthday awaits…",
-  brand:    "Hearts & Lilies",
+  brand:    "Kisses & Lilies",
 
   scene0: {
     tag:    "Happy Birthday · 5 May",
@@ -14,20 +14,20 @@ window.CONTENT = {
     headline: "finally 20",
   },
   scene2: {
-    tag:      "ii. in full bloom",
-    headline: "blossom",
+    tag:      "ii. my cutuuu",
+    headline: "i loveee youuuu",
   },
   scene3: {
-    tag:      "iii. the day arrives · may 5",
-    headline: "today",
+    tag:      "iii. happiest birthdayyyy · may 5",
+    headline: "i misss youuuu",
   },
   scene4: {
-    tag:      "iv. your golden day",
-    headline: "shine",
+    tag:      "iv. meowwww",
+    headline: "simba & kuma miss you and love youuu",
   },
   scene5: {
-    tag:      "v. birthday wishes · always",
-    headline: "cherished",
+    tag:      "v. yours · always",
+    headline: "have the best birthday everrrrr my baby mwaaah",
     button:   "Relive",
   },
 };
